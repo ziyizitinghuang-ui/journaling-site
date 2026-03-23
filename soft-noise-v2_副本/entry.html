@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Soft Noise - Entry</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body data-page="entry" data-theme="neutral">
+  <header class="site-header">
+    <div class="wrap header-row">
+      <nav class="nav-left">
+        <a class="nav-link" href="./history.html">Back</a>
+      </nav>
+
+      <div class="brand-center">
+        <div class="logo">Soft Noise</div>
+      </div>
+
+      <nav class="nav-right">
+        <a class="nav-link" href="./index.html">Home</a>
+        <a class="nav-link" href="https://sites.google.com/view/softnoise/home">Menu</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="page-hero">
+      <div class="hero-frame">
+        <p class="page-kicker">Saved entry</p>
+        <h1 class="page-title" id="entryTitle">A quiet record.</h1>
+        <p class="page-copy" id="entryCopy">What you wrote still has a place here.</p>
+      </div>
+    </section>
+
+    <section class="page-meta content-shell">
+      <div id="entryMoodChip" class="mood-chip"></div>
+      <div class="date-line" id="entryDate"></div>
+    </section>
+
+    <section class="card paper entry-card">
+      <div class="entry-body" id="entryText"></div>
+      <div class="actions split">
+        <button class="btn ghost" id="editBtn" type="button">Edit</button>
+        <button class="btn danger" id="deleteBtn" type="button">Delete</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+  <script>
+    const id = SoftNoise.getQuery("id");
+    const entry = SoftNoise.getEntryById(id);
+
+    const entryTitle = document.getElementById("entryTitle");
+    const entryCopy = document.getElementById("entryCopy");
+
+    if (!entry) {
+      SoftNoise.applyThemeToBody("neutral");
+      document.getElementById("entryText").textContent = "Entry not found.";
+      document.getElementById("entryDate").textContent = "";
+      document.getElementById("entryMoodChip").innerHTML = "";
+      document.getElementById("editBtn").disabled = true;
+      document.getElementById("deleteBtn").disabled = true;
+      entryTitle.textContent = "Nothing was found here.";
+      entryCopy.textContent = "This entry may have been deleted or never existed.";
+    } else {
+      const COPY = {
+        sad: {
+          title: "A quiet record of sadness.",
+          copy: "You gave this feeling a place to rest."
+        },
+        anxious: {
+          title: "A quiet record of anxiety.",
+          copy: "You paused long enough to write it down."
+        },
+        angry: {
+          title: "A quiet record of anger.",
+          copy: "What felt hot or sharp still deserved honesty."
+        },
+        overwhelmed: {
+          title: "A quiet record of overwhelm.",
+          copy: "Even crowded feelings can be held in words."
+        }
+      };
+
+      const moodCopy = COPY[entry.moodId] || {
+        title: "A quiet record.",
+        copy: "What you wrote still has a place here."
+      };
+
+      SoftNoise.applyThemeToBody(entry.moodId);
+      SoftNoise.renderMoodChip(document.getElementById("entryMoodChip"), entry.moodId);
+      document.getElementById("entryDate").textContent = SoftNoise.formatPrettyDate(entry.dateKey);
+      document.getElementById("entryText").innerHTML = SoftNoise.escapeHtml(entry.text).replace(/\n/g, "<br>");
+      entryTitle.textContent = moodCopy.title;
+      entryCopy.textContent = moodCopy.copy;
+    }
+
+    document.getElementById("editBtn").addEventListener("click", function() {
+      if (!id) return;
+      location.href = "journal.html?edit=" + encodeURIComponent(id);
+    });
+
+    document.getElementById("deleteBtn").addEventListener("click", function() {
+      if (!id) return;
+      SoftNoise.deleteEntry(id);
+      location.href = "history.html";
+    });
+  </script>
+</body>
+</html>

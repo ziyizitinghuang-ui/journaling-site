@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Soft Noise - Journal</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body data-page="journal" data-theme="neutral">
+  <header class="site-header">
+    <div class="wrap header-row">
+      <nav class="nav-left">
+        <a class="nav-link" href="./index.html">Home</a>
+      </nav>
+
+      <div class="brand-center">
+        <div class="logo">Soft Noise</div>
+      </div>
+
+      <nav class="nav-right">
+        <a class="nav-link" href="./history.html">History</a>
+        <a class="nav-link" href="https://sites.google.com/view/softnoise/home">Menu</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="page-hero">
+      <div class="hero-frame">
+        <p class="page-kicker">Journal</p>
+        <h1 class="page-title" id="pageTitle">Make room for what you feel.</h1>
+        <p class="page-copy" id="pageCopy">A few honest words are enough for today.</p>
+      </div>
+    </section>
+
+    <section class="page-meta content-shell">
+      <div id="moodChip" class="mood-chip"></div>
+      <div class="date-line" id="dateLine"></div>
+    </section>
+
+    <section class="card paper writing-card">
+      <textarea id="entryInput" class="textarea" placeholder="Write what is on your mind. Even a few words are enough."></textarea>
+      <div class="actions">
+        <div class="status" id="status"></div>
+        <button class="btn primary" id="saveBtn" type="button">Save entry</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+  <script>
+    const moodId = SoftNoise.getQuery("mood");
+    const editId = SoftNoise.getQuery("edit");
+
+    const pageTitle = document.getElementById("pageTitle");
+    const pageCopy = document.getElementById("pageCopy");
+    const dateLine = document.getElementById("dateLine");
+    const moodChip = document.getElementById("moodChip");
+    const entryInput = document.getElementById("entryInput");
+    const statusEl = document.getElementById("status");
+
+    const COPY = {
+      sad: {
+        title: "Give sadness a little space.",
+        copy: "You do not need to explain everything clearly. A few honest words are enough."
+      },
+      anxious: {
+        title: "Let your thoughts slow down here.",
+        copy: "Write down what feels tangled, heavy, or hard to quiet."
+      },
+      angry: {
+        title: "Put the feeling into words.",
+        copy: "You do not need to make it sound softer than it is."
+      },
+      overwhelmed: {
+        title: "Set down what feels like too much.",
+        copy: "You can write one thing at a time. It does not have to come out neatly."
+      },
+      neutral: {
+        title: "Make room for what you feel.",
+        copy: "A few honest words are enough for today."
+      }
+    };
+
+    let currentMoodId = moodId || "neutral";
+
+    if (editId) {
+      const entry = SoftNoise.getEntryById(editId);
+      if (entry) {
+        currentMoodId = entry.moodId;
+        dateLine.textContent = SoftNoise.formatPrettyDate(entry.dateKey);
+        entryInput.value = entry.text;
+      } else {
+        dateLine.textContent = SoftNoise.formatPrettyDate(SoftNoise.getLocalDateKey());
+      }
+    } else {
+      dateLine.textContent = SoftNoise.formatPrettyDate(SoftNoise.getLocalDateKey());
+    }
+
+    const moodCopy = COPY[currentMoodId] || COPY.neutral;
+    pageTitle.textContent = moodCopy.title;
+    pageCopy.textContent = moodCopy.copy;
+
+    SoftNoise.applyThemeToBody(currentMoodId);
+    SoftNoise.renderMoodChip(moodChip, currentMoodId);
+
+    document.getElementById("saveBtn").addEventListener("click", function() {
+      const text = entryInput.value.trim();
+
+      if (!text) {
+        statusEl.textContent = "Please write a few words first.";
+        return;
+      }
+
+      try {
+        if (editId) {
+          SoftNoise.updateEntry(editId, text);
+        } else {
+          SoftNoise.addEntry({ moodId: currentMoodId, text });
+        }
+        location.href = "./history.html";
+      } catch (e) {
+        statusEl.textContent = "Could not save just now.";
+      }
+    });
+  </script>
+</body>
+</html>

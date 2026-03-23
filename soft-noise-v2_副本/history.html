@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Soft Noise - History</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body data-page="history" data-theme="neutral">
+  <header class="site-header">
+    <div class="wrap header-row">
+      <nav class="nav-left">
+        <a class="nav-link" href="./index.html">Home</a>
+      </nav>
+
+      <div class="brand-center">
+        <div class="logo">Soft Noise</div>
+      </div>
+
+      <nav class="nav-right">
+        <a class="nav-link" href="https://sites.google.com/view/softnoise/home">Menu</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="page-hero">
+      <div class="hero-frame">
+        <p class="page-kicker">History</p>
+        <h1 class="page-title">Your journal history.</h1>
+        <p class="page-copy">Return to the feelings you already gave words to.</p>
+      </div>
+    </section>
+
+    <section class="history-bar">
+      <div class="history-title">Entries by month</div>
+      <div class="year-controls">
+        <button class="btn ghost" id="prevYear" type="button">◀</button>
+        <div class="year-pill" id="yearLabel"></div>
+        <button class="btn ghost" id="nextYear" type="button">▶</button>
+      </div>
+    </section>
+
+    <section class="history-list" id="historyMonths"></section>
+  </main>
+
+  <script src="./app.js"></script>
+  <script>
+    SoftNoise.applyThemeToBody("neutral");
+
+    const yearLabel = document.getElementById("yearLabel");
+    const monthsEl = document.getElementById("historyMonths");
+    const nowYear = new Date().getFullYear();
+    let currentYear = Number(SoftNoise.getQuery("year") || nowYear);
+
+    function render() {
+      yearLabel.textContent = String(currentYear);
+      SoftNoise.renderHistoryByMonth(monthsEl, currentYear, function(entryId) {
+        location.href = "entry.html?id=" + encodeURIComponent(entryId);
+      });
+    }
+
+    document.getElementById("prevYear").addEventListener("click", function() {
+      currentYear -= 1;
+      render();
+    });
+
+    document.getElementById("nextYear").addEventListener("click", function() {
+      currentYear += 1;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
