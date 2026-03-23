@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Soft Noise</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body data-page="home" data-theme="neutral">
+  <header class="site-header">
+    <div class="wrap header-row">
+      <div class="brand-left">
+        <div class="logo">Soft Noise</div>
+      </div>
+
+      <nav class="nav-right">
+        <a class="nav-link" href="./history.html">History</a>
+        <a class="nav-link" href="https://sites.google.com/view/softnoise/home">Menu</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="home-banner" aria-hidden="true"></section>
+
+    <section class="intro-block content-shell">
+      <h1 class="hero-title">How are you feeling today?</h1>
+      <p class="hero-sub">Choose one to begin.</p>
+    </section>
+
+    <section class="catalog">
+      <div id="moodGrid" class="grid"></div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+  <script>
+    SoftNoise.applyThemeToBody("neutral");
+    SoftNoise.renderMoodGrid("moodGrid", function(moodId) {
+      location.href = "journal.html?mood=" + encodeURIComponent(moodId);
+    });
+  </script>
+</body>
+</html>
